@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
+<!-- Head部分保持不变 -->
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -90,12 +91,20 @@
         .hidden {
             display: none;
         }
-        /* 新增：名额显示样式 */
         .quota-info {
             margin-top: 1rem;
             font-size: 0.875rem;
             color: #4b5563;
             text-align: center;
+        }
+        /* 新增：Other部门输入框的过渡效果 */
+        .other-department {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+        }
+        .other-department.show {
+            max-height: 100px;
         }
     </style>
 </head>
@@ -130,6 +139,7 @@
                         <option value="IDAR">IDAR</option>
                         <option value="IHEA">IHEA</option>
                         <option value="INTO APAC">INTO APAC</option>
+                        <option value="IT">IT</option>
                         <option value="MADU">MADU</option>
                         <option value="NGS">NGS</option>
                         <option value="OTR">OTR</option>
@@ -139,7 +149,14 @@
                         <option value="SDS">SDS</option>
                         <option value="TA">TA</option>
                         <option value="TDS">TDS</option>
+                        <option value="Other">Other</option>
                     </select>
+                </div>
+
+                <!-- 新增：Other部门输入框 -->
+                <div id="otherDepartmentGroup" class="form-group other-department">
+                    <label for="otherDepartment">请具体说明部门 | Please specify department *</label>
+                    <input type="text" id="otherDepartment">
                 </div>
                 
                 <div class="form-group">
@@ -188,6 +205,23 @@
         };
         const DEPARTMENT_LIMIT = 3; // 每个部门人数限制
 
+        // 处理Other部门输入框显示
+        const departmentSelect = document.getElementById('department');
+        const otherDepartmentGroup = document.getElementById('otherDepartmentGroup');
+        const otherDepartmentInput = document.getElementById('otherDepartment');
+
+        departmentSelect.addEventListener('change', function() {
+            if (this.value === 'Other') {
+                otherDepartmentGroup.classList.add('show');
+                otherDepartmentInput.required = true;
+            } else {
+                otherDepartmentGroup.classList.remove('show');
+                otherDepartmentInput.required = false;
+                otherDepartmentInput.value = '';
+            }
+            updateQuotaInfo();
+        });
+
         function showStatus(message, isError = false) {
             const statusDiv = document.getElementById('status');
             statusDiv.textContent = message;
@@ -200,7 +234,7 @@
             const city = document.getElementById('city').value;
             const department = document.getElementById('department').value;
             
-            if (!city || !department) {
+            if (!city || !department || department === 'Other') {
                 document.getElementById('quotaInfo').textContent = '';
                 return;
             }
@@ -234,6 +268,24 @@
 
         // 检查配额
         async function checkQuota(city, department) {
+            // 如果是Other部门，不检查部门配额
+            if (department === 'Other') {
+                const snapshot = await registrationsRef.once('value');
+                let cityCount = 0;
+                
+                snapshot.forEach((child) => {
+                    const registration = child.val();
+                    if (registration.city === city) {
+                        cityCount++;
+                    }
+                });
+
+                if (cityCount >= CITY_LIMITS[city]) {
+                    throw new Error(`${city}名额已满 | ${city} quota is full`);
+                }
+                return;
+            }
+
             const snapshot = await registrationsRef.once('value');
             let cityCount = 0;
             let departmentCount = 0;
@@ -264,13 +316,23 @@
             submitButton.textContent = '提交中... | Submitting...';
             
             try {
+                const department = document.getElementById('department').value;
                 const formData = {
                     city: document.getElementById('city').value,
-                    department: document.getElementById('department').value,
+                    department: department,
                     wwid: document.getElementById('wwid').value.trim(),
                     email: document.getElementById('email').value,
                     timestamp: firebase.database.ServerValue.TIMESTAMP
                 };
+
+                // 如果选择了Other，添加具体部门信息
+                if (department === 'Other') {
+                    const otherDepartment = document.getElementById('otherDepartment').value.trim();
+                    if (!otherDepartment) {
+                        throw new Error('请填写具体部门 | Please specify department');
+                    }
+                    formData.otherDepartment = otherDepartment;
+                }
 
                 // 验证字段
                 if (!formData.city || !formData.department || !formData.wwid || !formData.email) {
@@ -284,6 +346,7 @@
                 await registrationsRef.push(formData);
                 showStatus('注册成功！| Registration successful!');
                 this.reset();
+                otherDepartmentGroup.classList.remove('show');
                 updateQuotaInfo();
 
             } catch (error) {
