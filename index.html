@@ -290,7 +290,7 @@
                 await registrationsRef.push(formData);
                 
                 if (formData.isPostQuota) {
-                    showStatus('注册成功，但已满额，仍记录! | Registration successful but after quota full!', false);
+                    showStatus('抱歉，注册已满额，如有额外名额将联系您。 | Sorry, registration is full. We will contact you if additional slots become available.', false);
                 } else {
                     showStatus('注册成功！| Registration successful!');
                 }
