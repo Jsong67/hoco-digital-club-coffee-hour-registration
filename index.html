@@ -91,12 +91,6 @@
         .hidden {
             display: none;
         }
-        .quota-info {
-            margin-top: 1rem;
-            font-size: 0.875rem;
-            color: #4b5563;
-            text-align: center;
-        }
         /* 新增：Other部门输入框的过渡效果 */
         .other-department {
             max-height: 0;
@@ -172,7 +166,6 @@
                 <button type="submit">提交 | Submit</button>
             </form>
             <div id="status" class="hidden"></div>
-            <div id="quotaInfo" class="quota-info"></div>
         </div>
     </div>
 
@@ -219,7 +212,6 @@
                 otherDepartmentInput.required = false;
                 otherDepartmentInput.value = '';
             }
-            updateQuotaInfo();
         });
 
         function showStatus(message, isError = false) {
@@ -229,63 +221,8 @@
             statusDiv.classList.remove('hidden');
         }
 
-        // 更新配额信息显示
-        function updateQuotaInfo() {
-            const city = document.getElementById('city').value;
-            const department = document.getElementById('department').value;
-            
-            if (!city || !department || department === 'Other') {
-                document.getElementById('quotaInfo').textContent = '';
-                return;
-            }
-
-            registrationsRef.once('value').then((snapshot) => {
-                let cityCount = 0;
-                let departmentCount = 0;
-                
-                snapshot.forEach((child) => {
-                    const registration = child.val();
-                    if (registration.city === city) {
-                        cityCount++;
-                        if (registration.department === department) {
-                            departmentCount++;
-                        }
-                    }
-                });
-
-                const cityLimit = CITY_LIMITS[city];
-                const cityRemaining = cityLimit - cityCount;
-                const deptRemaining = DEPARTMENT_LIMIT - departmentCount;
-
-                document.getElementById('quotaInfo').textContent = 
-                    `${city}剩余名额: ${cityRemaining} | 该部门剩余名额: ${deptRemaining}`;
-            });
-        }
-
-        // 监听城市和部门选择变化
-        document.getElementById('city').addEventListener('change', updateQuotaInfo);
-        document.getElementById('department').addEventListener('change', updateQuotaInfo);
-
         // 检查配额
         async function checkQuota(city, department) {
-            // 如果是Other部门，不检查部门配额
-            if (department === 'Other') {
-                const snapshot = await registrationsRef.once('value');
-                let cityCount = 0;
-                
-                snapshot.forEach((child) => {
-                    const registration = child.val();
-                    if (registration.city === city) {
-                        cityCount++;
-                    }
-                });
-
-                if (cityCount >= CITY_LIMITS[city]) {
-                    throw new Error(`${city}名额已满 | ${city} quota is full`);
-                }
-                return;
-            }
-
             const snapshot = await registrationsRef.once('value');
             let cityCount = 0;
             let departmentCount = 0;
@@ -301,11 +238,16 @@
             });
 
             if (cityCount >= CITY_LIMITS[city]) {
-                throw new Error(`${city}名额已满 | ${city} quota is full`);
+                // Return false if city limit is reached
+                return { cityFull: true, departmentFull: departmentCount >= DEPARTMENT_LIMIT, cityCount, departmentCount };
             }
             if (departmentCount >= DEPARTMENT_LIMIT) {
-                throw new Error(`该部门名额已满 | Department quota is full`);
+                // Return false if department limit is reached
+                return { cityFull: false, departmentFull: true, cityCount, departmentCount };
             }
+            
+            // Return true if quota is available
+            return { cityFull: false, departmentFull: false, cityCount, departmentCount };
         }
 
         document.getElementById('registrationForm').addEventListener('submit', async function(e) {
@@ -339,15 +281,22 @@
                     throw new Error('请填写所有必填字段 | Please fill in all required fields');
                 }
 
-                // 检查配额
-                await checkQuota(formData.city, formData.department);
+                const quotaStatus = await checkQuota(formData.city, formData.department);
+
+                // Add information about quota status to formData
+                formData.isPostQuota = quotaStatus.cityFull || quotaStatus.departmentFull;
 
                 // 提交到数据库
                 await registrationsRef.push(formData);
-                showStatus('注册成功！| Registration successful!');
+                
+                if (formData.isPostQuota) {
+                    showStatus('注册成功，但已满额，仍记录! | Registration successful but after quota full!', false);
+                } else {
+                    showStatus('注册成功！| Registration successful!');
+                }
+                
                 this.reset();
                 otherDepartmentGroup.classList.remove('show');
-                updateQuotaInfo();
 
             } catch (error) {
                 console.error("Error:", error);
@@ -358,8 +307,6 @@
             }
         });
 
-        // 初始化时更新配额信息
-        updateQuotaInfo();
     </script>
 </body>
 </html>
