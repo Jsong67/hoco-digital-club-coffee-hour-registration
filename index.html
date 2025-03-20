@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">  
     <title>HOCO Digital Club Coffee Hour</title>  
     <style>  
-        /* 保持原有样式 */  
+        /* 原有样式保持不变 */  
         body {  
             font-family: Arial, sans-serif;  
             background-color: #f3f4f6;  
@@ -99,12 +99,52 @@
         .other-department.show {  
             max-height: 100px;  
         }  
+        
+        /* 自定义弹窗样式 */  
+        .custom-alert {  
+            display: none;  
+            position: fixed;  
+            top: 0;  
+            left: 0;  
+            width: 100%;  
+            height: 100%;  
+            background-color: rgba(0, 0, 0, 0.5);  
+            z-index: 1000;  
+            align-items: center;  
+            justify-content: center;  
+        }  
+        .alert-box {  
+            background-color: white;  
+            width: 90%;  
+            max-width: 400px;  
+            padding: 20px;  
+            border-radius: 8px;  
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);  
+        }  
+        .alert-message {  
+            font-size: 16px;  
+            margin-bottom: 20px;  
+            text-align: center;  
+        }  
+        .alert-button {  
+            width: 100%;  
+            background-color: #2563eb;  
+            color: white;  
+            padding: 8px 0;  
+            border: none;  
+            border-radius: 4px;  
+            cursor: pointer;  
+            font-weight: bold;  
+        }  
+        .alert-button:hover {  
+            background-color: #1d4ed8;  
+        }  
     </style>  
 </head>  
 <body>  
     <div class="container">  
         <h1>HOCO Digital Club Coffee Hour</h1>  
-        <h2 style="text-align: center;">2025.3.25</h2>  
+        <h2 style="text-align: center;">2025.2.25</h2>  
         <div class="form-container">  
             <form id="registrationForm">  
                 <div class="form-group">  
@@ -167,6 +207,14 @@
             <div id="status" class="hidden"></div>  
         </div>  
     </div>  
+    
+    <!-- 自定义弹窗 -->  
+    <div id="customAlert" class="custom-alert">  
+        <div class="alert-box">  
+            <div id="alertMessage" class="alert-message"></div>  
+            <button id="alertButton" class="alert-button">OK</button>  
+        </div>  
+    </div>  
 
     <!-- Firebase SDK -->  
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>  
@@ -190,7 +238,7 @@
         const database = firebase.database();  
         
         // 当前活动日期 - 用作数据分组的键  
-        const EVENT_DATE = "2025-03-25";  
+        const EVENT_DATE = "2025-02-25";  
         
         // 使用日期作为数据节点，这样每次活动都有独立的数据集合  
         const currentEventRef = database.ref('events/' + EVENT_DATE + '/registrations');  
@@ -212,6 +260,44 @@
             '637011747', '702439504', '92008398', '152966620', '152851370',  
             '152244012'  
         ];  
+
+        // 自定义弹窗函数  
+        function showCustomAlert(message) {  
+            const alertElement = document.getElementById('customAlert');  
+            const messageElement = document.getElementById('alertMessage');  
+            const buttonElement = document.getElementById('alertButton');  
+            
+            messageElement.innerHTML = message;  
+            alertElement.style.display = 'flex';  
+            
+            buttonElement.focus();  
+            
+            // 点击OK按钮关闭弹窗  
+            buttonElement.onclick = function() {  
+                alertElement.style.display = 'none';  
+            }  
+            
+            // 点击弹窗外部也可以关闭弹窗  
+            alertElement.onclick = function(e) {  
+                if (e.target === alertElement) {  
+                    alertElement.style.display = 'none';  
+                }  
+            }  
+            
+            // 按ESC键关闭弹窗  
+            document.addEventListener('keydown', function(e) {  
+                if (e.key === 'Escape' && alertElement.style.display === 'flex') {  
+                    alertElement.style.display = 'none';  
+                }  
+            });  
+            
+            return new Promise(resolve => {  
+                buttonElement.onclick = function() {  
+                    alertElement.style.display = 'none';  
+                    resolve();  
+                }  
+            });  
+        }  
 
         // 处理Other部门输入框显示  
         const departmentSelect = document.getElementById('department');  
@@ -286,9 +372,9 @@
             try {  
                 const wwid = document.getElementById('wwid').value.trim();  
                 
-                // 检查用户是否在WWID黑名单中  
+                // 检查用户是否在WWID黑名单中 - 使用自定义弹窗  
                 if (PREVIOUS_ATTENDEES.includes(wwid)) {  
-                    alert("您之前已参加过本活动，请把机会留给其他同事吧❤️");  
+                    await showCustomAlert("您之前已参加过本活动，请把机会留给其他同事吧。❤️");  
                     this.reset();  
                     otherDepartmentGroup.classList.remove('show');  
                     submitButton.disabled = false;  
@@ -296,10 +382,10 @@
                     return;  
                 }  
                 
-                // 检查用户是否已经在当前活动中注册  
+                // 检查用户是否已经在当前活动中注册 - 使用自定义弹窗  
                 const alreadyRegistered = await checkWwidAlreadyRegistered(wwid);  
                 if (alreadyRegistered) {  
-                    alert("您已经在本次活动中完成注册，无需重复报名。");  
+                    await showCustomAlert("您已经在本次活动中完成注册，无需重复报名。");  
                     this.reset();  
                     otherDepartmentGroup.classList.remove('show');  
                     submitButton.disabled = false;  
