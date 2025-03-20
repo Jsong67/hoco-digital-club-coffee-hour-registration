@@ -1,312 +1,365 @@
-<!DOCTYPE html>
-<html lang="zh-CN">
-<!-- Head部分保持不变 -->
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HOCO Digital Club Coffee Hour</title>
-    <style>
-        /* 保持原有样式 */
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f3f4f6;
-            margin: 0;
-            padding: 0;
-        }
-        .container {
-            max-width: 28rem;
-            margin: 2rem auto;
-            padding: 0 1rem;
-        }
-        h1 {
-            font-size: 1.5rem;
-            font-weight: bold;
-            text-align: center;
-            color: #1f2937;
-            margin-bottom: 1.5rem;
-        }
-        .form-container {
-            background-color: white;
-            border-radius: 0.75rem;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-            overflow: hidden;
-            padding: 2rem;
-        }
-        .form-group {
-            margin-bottom: 1rem;
-        }
-        label {
-            display: block;
-            font-size: 0.875rem;
-            font-weight: 500;
-            color: #374151;
-            margin-bottom: 0.5rem;
-        }
-        select, input {
-            width: 100%;
-            padding: 0.5rem;
-            border: 1px solid #d1d5db;
-            border-radius: 0.375rem;
-            font-size: 1rem;
-            margin-bottom: 1rem;
-        }
-        select:focus, input:focus {
-            outline: none;
-            border-color: #2563eb;
-            ring: 2px;
-            ring-color: #93c5fd;
-        }
-        button {
-            width: 100%;
-            background-color: #2563eb;
-            color: white;
-            padding: 0.5rem 1rem;
-            border: none;
-            border-radius: 0.375rem;
-            font-weight: 500;
-            cursor: pointer;
-            transition: background-color 0.2s;
-        }
-        button:hover {
-            background-color: #1d4ed8;
-        }
-        button:disabled {
-            background-color: #93c5fd;
-            cursor: not-allowed;
-        }
-        #status {
-            margin-top: 1rem;
-            padding: 1rem;
-            border-radius: 0.375rem;
-            text-align: center;
-        }
-        .success {
-            background-color: #dcfce7;
-            color: #166534;
-        }
-        .error {
-            background-color: #fee2e2;
-            color: #991b1b;
-        }
-        .hidden {
-            display: none;
-        }
-        /* 新增：Other部门输入框的过渡效果 */
-        .other-department {
-            max-height: 0;
-            overflow: hidden;
-            transition: max-height 0.3s ease-out;
-        }
-        .other-department.show {
-            max-height: 100px;
-        }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <h1>HOCO Digital Club Coffee Hour</h1>
-        <h2 style="text-align: center;">2025.2.25</h2>
-        <div class="form-container">
-            <form id="registrationForm">
-                <div class="form-group">
-                    <label for="city">地点 | Location *</label>
-                    <select id="city" required>
-                        <option value="">选择地点 | Select Location</option>
-                        <option value="上海">上海 | Shanghai</option>
-                        <option value="北京">北京 | Beijing</option>
-                    </select>
-                </div>
+<!DOCTYPE html>  
+<html lang="zh-CN">  
+<head>  
+    <meta charset="UTF-8">  
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">  
+    <title>HOCO Digital Club Coffee Hour</title>  
+    <style>  
+        /* 保持原有样式 */  
+        body {  
+            font-family: Arial, sans-serif;  
+            background-color: #f3f4f6;  
+            margin: 0;  
+            padding: 0;  
+        }  
+        .container {  
+            max-width: 28rem;  
+            margin: 2rem auto;  
+            padding: 0 1rem;  
+        }  
+        h1 {  
+            font-size: 1.5rem;  
+            font-weight: bold;  
+            text-align: center;  
+            color: #1f2937;  
+            margin-bottom: 1.5rem;  
+        }  
+        .form-container {  
+            background-color: white;  
+            border-radius: 0.75rem;  
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);  
+            overflow: hidden;  
+            padding: 2rem;  
+        }  
+        .form-group {  
+            margin-bottom: 1rem;  
+        }  
+        label {  
+            display: block;  
+            font-size: 0.875rem;  
+            font-weight: 500;  
+            color: #374151;  
+            margin-bottom: 0.5rem;  
+        }  
+        select, input {  
+            width: 100%;  
+            padding: 0.5rem;  
+            border: 1px solid #d1d5db;  
+            border-radius: 0.375rem;  
+            font-size: 1rem;  
+            margin-bottom: 1rem;  
+        }  
+        select:focus, input:focus {  
+            outline: none;  
+            border-color: #2563eb;  
+            ring: 2px;  
+            ring-color: #93c5fd;  
+        }  
+        button {  
+            width: 100%;  
+            background-color: #2563eb;  
+            color: white;  
+            padding: 0.5rem 1rem;  
+            border: none;  
+            border-radius: 0.375rem;  
+            font-weight: 500;  
+            cursor: pointer;  
+            transition: background-color 0.2s;  
+        }  
+        button:hover {  
+            background-color: #1d4ed8;  
+        }  
+        button:disabled {  
+            background-color: #93c5fd;  
+            cursor: not-allowed;  
+        }  
+        #status {  
+            margin-top: 1rem;  
+            padding: 1rem;  
+            border-radius: 0.375rem;  
+            text-align: center;  
+        }  
+        .success {  
+            background-color: #dcfce7;  
+            color: #166534;  
+        }  
+        .error {  
+            background-color: #fee2e2;  
+            color: #991b1b;  
+        }  
+        .hidden {  
+            display: none;  
+        }  
+        /* 新增：Other部门输入框的过渡效果 */  
+        .other-department {  
+            max-height: 0;  
+            overflow: hidden;  
+            transition: max-height 0.3s ease-out;  
+        }  
+        .other-department.show {  
+            max-height: 100px;  
+        }  
+    </style>  
+</head>  
+<body>  
+    <div class="container">  
+        <h1>HOCO Digital Club Coffee Hour</h1>  
+        <h2 style="text-align: center;">2025.2.25</h2>  
+        <div class="form-container">  
+            <form id="registrationForm">  
+                <div class="form-group">  
+                    <label for="city">地点 | Location *</label>  
+                    <select id="city" required>  
+                        <option value="">选择地点 | Select Location</option>  
+                        <option value="上海">上海 | Shanghai</option>  
+                        <option value="北京">北京 | Beijing</option>  
+                    </select>  
+                </div>  
                 
-                <div class="form-group">
-                    <label for="department">部门 | Department *</label>
-                    <select id="department" required>
-                        <option value="">选择部门 | Select Department</option>
-                        <option value="AP PL Group">AP PL Group</option>
-                        <option value="CPP">CPP</option>
-                        <option value="C&SP">C&SP</option>
-                        <option value="CSC">CSC</option>
-                        <option value="DM&CM">DM&CM</option>
-                        <option value="DSDH">DSDH</option>
-                        <option value="GCO">GCO</option>
-                        <option value="GCO-CCS">GCO-CCS</option>
-                        <option value="GEO">GEO</option>
-                        <option value="IDAR">IDAR</option>
-                        <option value="IHEA">IHEA</option>
-                        <option value="INTO APAC">INTO APAC</option>
-                        <option value="IT">IT</option>
-                        <option value="MADU">MADU</option>
-                        <option value="NGS">NGS</option>
-                        <option value="OTR">OTR</option>
-                        <option value="PSTS">PSTS</option>
-                        <option value="RA">RA</option>
-                        <option value="RegMW">RegMW</option>
-                        <option value="SDS">SDS</option>
-                        <option value="TA">TA</option>
-                        <option value="TDS">TDS</option>
-                        <option value="Other">Other</option>
-                    </select>
-                </div>
+                <div class="form-group">  
+                    <label for="department">部门 | Department *</label>  
+                    <select id="department" required>  
+                        <option value="">选择部门 | Select Department</option>  
+                        <option value="AP PL Group">AP PL Group</option>  
+                        <option value="CPP">CPP</option>  
+                        <option value="C&SP">C&SP</option>  
+                        <option value="CSC">CSC</option>  
+                        <option value="DM&CM">DM&CM</option>  
+                        <option value="DSDH">DSDH</option>  
+                        <option value="GCO">GCO</option>  
+                        <option value="GCO-CCS">GCO-CCS</option>  
+                        <option value="GEO">GEO</option>  
+                        <option value="IDAR">IDAR</option>  
+                        <option value="IHEA">IHEA</option>  
+                        <option value="INTO APAC">INTO APAC</option>  
+                        <option value="IT">IT</option>  
+                        <option value="MADU">MADU</option>  
+                        <option value="NGS">NGS</option>  
+                        <option value="OTR">OTR</option>  
+                        <option value="PSTS">PSTS</option>  
+                        <option value="RA">RA</option>  
+                        <option value="RegMW">RegMW</option>  
+                        <option value="SDS">SDS</option>  
+                        <option value="TA">TA</option>  
+                        <option value="TDS">TDS</option>  
+                        <option value="Other">Other</option>  
+                    </select>  
+                </div>  
 
-                <!-- 新增：Other部门输入框 -->
-                <div id="otherDepartmentGroup" class="form-group other-department">
-                    <label for="otherDepartment">请具体说明部门 | Please specify department *</label>
-                    <input type="text" id="otherDepartment">
-                </div>
+                <!-- 新增：Other部门输入框 -->  
+                <div id="otherDepartmentGroup" class="form-group other-department">  
+                    <label for="otherDepartment">请具体说明部门 | Please specify department *</label>  
+                    <input type="text" id="otherDepartment">  
+                </div>  
                 
-                <div class="form-group">
-                    <label for="wwid">WWID *</label>
-                    <input type="text" id="wwid" required>
-                </div>
+                <div class="form-group">  
+                    <label for="wwid">WWID *</label>  
+                    <input type="text" id="wwid" required>  
+                </div>  
                 
-                <div class="form-group">
-                    <label for="email">邮箱 | Email *</label>
-                    <input type="email" id="email" required>
-                </div>
+                <div class="form-group">  
+                    <label for="email">邮箱 | Email *</label>  
+                    <input type="email" id="email" required>  
+                </div>  
                 
-                <button type="submit">提交 | Submit</button>
-            </form>
-            <div id="status" class="hidden"></div>
-        </div>
-    </div>
+                <button type="submit">提交 | Submit</button>  
+            </form>  
+            <div id="status" class="hidden"></div>  
+        </div>  
+    </div>  
 
-    <!-- Firebase SDK -->
-    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
+    <!-- Firebase SDK -->  
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>  
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>  
 
-    <script>
-        // Firebase configuration
-        const firebaseConfig = {
-            apiKey: "AIzaSyDm0nf38xxXHKXSPAk0tIZqkL-je4rwK1s",
-            authDomain: "digital-club-coffee-hour.firebaseapp.com",
-            databaseURL: "https://digital-club-coffee-hour-default-rtdb.asia-southeast1.firebasedatabase.app",
-            projectId: "digital-club-coffee-hour",
-            storageBucket: "digital-club-coffee-hour.firebasestorage.app",
-            messagingSenderId: "983467698303",
-            appId: "1:983467698303:web:4539d04b818e984e40774a",
-            measurementId: "G-P6S11NZW7L"
-        };
+    <script>  
+        // Firebase configuration  
+        const firebaseConfig = {  
+            apiKey: "AIzaSyDm0nf38xxXHKXSPAk0tIZqkL-je4rwK1s",  
+            authDomain: "digital-club-coffee-hour.firebaseapp.com",  
+            databaseURL: "https://digital-club-coffee-hour-default-rtdb.asia-southeast1.firebasedatabase.app",  
+            projectId: "digital-club-coffee-hour",  
+            storageBucket: "digital-club-coffee-hour.firebasestorage.app",  
+            messagingSenderId: "983467698303",  
+            appId: "1:983467698303:web:4539d04b818e984e40774a",  
+            measurementId: "G-P6S11NZW7L"  
+        };  
 
-        // Initialize Firebase
-        firebase.initializeApp(firebaseConfig);
-        const database = firebase.database();
-        const registrationsRef = database.ref('registrations');
+        // 初始化 Firebase  
+        firebase.initializeApp(firebaseConfig);  
+        const database = firebase.database();  
+        
+        // 当前活动日期 - 用作数据分组的键  
+        const EVENT_DATE = "2025-03-25";  
+        
+        // 使用日期作为数据节点，这样每次活动都有独立的数据集合  
+        const currentEventRef = database.ref('events/' + EVENT_DATE + '/registrations');  
+        
+        // 城市人数限制  
+        const CITY_LIMITS = {  
+            '北京': 20,  
+            '上海': 20  
+        };  
+        const DEPARTMENT_LIMIT = 3; // 每个部门人数限制  
 
-        // 城市人数限制
-        const CITY_LIMITS = {
-            '北京': 15,
-            '上海': 20
-        };
-        const DEPARTMENT_LIMIT = 3; // 每个部门人数限制
+        // 已参加过活动的WWID列表  
+        const PREVIOUS_ATTENDEES = [  
+            '152880372', '152920441', '152874180', '152845695', '152822267',   
+            '152041823', '152071622', '152930692', '152193772', '152916357',  
+            '200001826', '152028599', '152869141', '152049062', '92004145',  
+            '152845300', '152891703', '152805968', '152852878', '152208303',  
+            '702457583', '152055727', '152218547', '152225014', '702468394',  
+            '637011747', '702439504', '92008398', '152966620', '152851370',  
+            '152244012'  
+        ];  
 
-        // 处理Other部门输入框显示
-        const departmentSelect = document.getElementById('department');
-        const otherDepartmentGroup = document.getElementById('otherDepartmentGroup');
-        const otherDepartmentInput = document.getElementById('otherDepartment');
+        // 处理Other部门输入框显示  
+        const departmentSelect = document.getElementById('department');  
+        const otherDepartmentGroup = document.getElementById('otherDepartmentGroup');  
+        const otherDepartmentInput = document.getElementById('otherDepartment');  
 
-        departmentSelect.addEventListener('change', function() {
-            if (this.value === 'Other') {
-                otherDepartmentGroup.classList.add('show');
-                otherDepartmentInput.required = true;
-            } else {
-                otherDepartmentGroup.classList.remove('show');
-                otherDepartmentInput.required = false;
-                otherDepartmentInput.value = '';
-            }
-        });
+        departmentSelect.addEventListener('change', function() {  
+            if (this.value === 'Other') {  
+                otherDepartmentGroup.classList.add('show');  
+                otherDepartmentInput.required = true;  
+            } else {  
+                otherDepartmentGroup.classList.remove('show');  
+                otherDepartmentInput.required = false;  
+                otherDepartmentInput.value = '';  
+            }  
+        });  
 
-        function showStatus(message, isError = false) {
-            const statusDiv = document.getElementById('status');
-            statusDiv.textContent = message;
-            statusDiv.className = isError ? 'error' : 'success';
-            statusDiv.classList.remove('hidden');
-        }
+        function showStatus(message, isError = false) {  
+            const statusDiv = document.getElementById('status');  
+            statusDiv.textContent = message;  
+            statusDiv.className = isError ? 'error' : 'success';  
+            statusDiv.classList.remove('hidden');  
+        }  
 
-        // 检查配额
-        async function checkQuota(city, department) {
-            const snapshot = await registrationsRef.once('value');
-            let cityCount = 0;
-            let departmentCount = 0;
+        // 检查配额 - 只检查当前活动的注册数据  
+        async function checkQuota(city, department) {  
+            const snapshot = await currentEventRef.once('value');  
+            let cityCount = 0;  
+            let departmentCount = 0;  
             
-            snapshot.forEach((child) => {
-                const registration = child.val();
-                if (registration.city === city) {
-                    cityCount++;
-                    if (registration.department === department) {
-                        departmentCount++;
-                    }
-                }
-            });
+            snapshot.forEach((child) => {  
+                const registration = child.val();  
+                if (registration.city === city) {  
+                    cityCount++;  
+                    if (registration.department === department) {  
+                        departmentCount++;  
+                    }  
+                }  
+            });  
 
-            if (cityCount >= CITY_LIMITS[city]) {
-                // Return false if city limit is reached
-                return { cityFull: true, departmentFull: departmentCount >= DEPARTMENT_LIMIT, cityCount, departmentCount };
-            }
-            if (departmentCount >= DEPARTMENT_LIMIT) {
-                // Return false if department limit is reached
-                return { cityFull: false, departmentFull: true, cityCount, departmentCount };
-            }
+            return {   
+                cityFull: cityCount >= CITY_LIMITS[city],   
+                departmentFull: departmentCount >= DEPARTMENT_LIMIT,   
+                cityCount,   
+                departmentCount   
+            };  
+        }  
+        
+        // 检查WWID是否已经在当前活动中注册  
+        async function checkWwidAlreadyRegistered(wwid) {  
+            const snapshot = await currentEventRef.once('value');  
+            let isRegistered = false;  
             
-            // Return true if quota is available
-            return { cityFull: false, departmentFull: false, cityCount, departmentCount };
-        }
-
-        document.getElementById('registrationForm').addEventListener('submit', async function(e) {
-            e.preventDefault();
+            snapshot.forEach((child) => {  
+                const registration = child.val();  
+                if (registration.wwid === wwid) {  
+                    isRegistered = true;  
+                    return true; // 跳出forEach循环  
+                }  
+            });  
             
-            const submitButton = this.querySelector('button');
-            submitButton.disabled = true;
-            submitButton.textContent = '提交中... | Submitting...';
+            return isRegistered;  
+        }  
+
+        document.getElementById('registrationForm').addEventListener('submit', async function(e) {  
+            e.preventDefault();  
             
-            try {
-                const department = document.getElementById('department').value;
-                const formData = {
-                    city: document.getElementById('city').value,
-                    department: department,
-                    wwid: document.getElementById('wwid').value.trim(),
-                    email: document.getElementById('email').value,
-                    timestamp: firebase.database.ServerValue.TIMESTAMP
-                };
-
-                // 如果选择了Other，添加具体部门信息
-                if (department === 'Other') {
-                    const otherDepartment = document.getElementById('otherDepartment').value.trim();
-                    if (!otherDepartment) {
-                        throw new Error('请填写具体部门 | Please specify department');
-                    }
-                    formData.otherDepartment = otherDepartment;
-                }
-
-                // 验证字段
-                if (!formData.city || !formData.department || !formData.wwid || !formData.email) {
-                    throw new Error('请填写所有必填字段 | Please fill in all required fields');
-                }
-
-                const quotaStatus = await checkQuota(formData.city, formData.department);
-
-                // Add information about quota status to formData
-                formData.isPostQuota = quotaStatus.cityFull || quotaStatus.departmentFull;
-
-                // 提交到数据库
-                await registrationsRef.push(formData);
+            const submitButton = this.querySelector('button');  
+            submitButton.disabled = true;  
+            submitButton.textContent = '提交中... | Submitting...';  
+            
+            try {  
+                const wwid = document.getElementById('wwid').value.trim();  
                 
-                if (formData.isPostQuota) {
-                    showStatus('抱歉，注册已满额，如有额外名额将联系您。 | Sorry, registration is full. We will contact you if additional slots become available.', false);
-                } else {
-                    showStatus('注册成功！| Registration successful!');
-                }
+                // 检查用户是否在WWID黑名单中  
+                if (PREVIOUS_ATTENDEES.includes(wwid)) {  
+                    alert("您之前已参加过本活动，请把机会留给其他同事吧❤️");  
+                    this.reset();  
+                    otherDepartmentGroup.classList.remove('show');  
+                    submitButton.disabled = false;  
+                    submitButton.textContent = '提交 | Submit';  
+                    return;  
+                }  
                 
-                this.reset();
-                otherDepartmentGroup.classList.remove('show');
+                // 检查用户是否已经在当前活动中注册  
+                const alreadyRegistered = await checkWwidAlreadyRegistered(wwid);  
+                if (alreadyRegistered) {  
+                    alert("您已经在本次活动中完成注册，无需重复报名。");  
+                    this.reset();  
+                    otherDepartmentGroup.classList.remove('show');  
+                    submitButton.disabled = false;  
+                    submitButton.textContent = '提交 | Submit';  
+                    return;  
+                }  
+                
+                const department = document.getElementById('department').value;  
+                const formData = {  
+                    city: document.getElementById('city').value,  
+                    department: department,  
+                    wwid: wwid,  
+                    email: document.getElementById('email').value,  
+                    timestamp: firebase.database.ServerValue.TIMESTAMP  
+                };  
 
-            } catch (error) {
-                console.error("Error:", error);
-                showStatus(error.message || '提交失败，请稍后重试 | Submission failed, please try again later', true);
-            } finally {
-                submitButton.disabled = false;
-                submitButton.textContent = '提交 | Submit';
-            }
-        });
+                // 如果选择了Other，添加具体部门信息  
+                if (department === 'Other') {  
+                    const otherDepartment = document.getElementById('otherDepartment').value.trim();  
+                    if (!otherDepartment) {  
+                        throw new Error('请填写具体部门 | Please specify department');  
+                    }  
+                    formData.otherDepartment = otherDepartment;  
+                }  
 
-    </script>
-</body>
-</html>
+                // 验证字段  
+                if (!formData.city || !formData.department || !formData.wwid || !formData.email) {  
+                    throw new Error('请填写所有必填字段 | Please fill in all required fields');  
+                }  
+
+                const quotaStatus = await checkQuota(formData.city, formData.department);  
+
+                // 修复部门满额但城市未满额的情况  
+                if (quotaStatus.cityFull) {  
+                    // 如果城市已满额，添加到等待名单  
+                    formData.isPostQuota = true;  
+                    await currentEventRef.push(formData);  
+                    showStatus('抱歉，注册已满额，如有额外名额将联系您。 | Sorry, registration is full. We will contact you if additional slots become available.', false);  
+                } else if (quotaStatus.departmentFull) {  
+                    // 如果部门已满额但城市未满，提示用户选择其他部门  
+                    throw new Error('抱歉，该部门名额已满，请选择其他部门 | Sorry, this department is full. Please choose another department.');  
+                } else {  
+                    // 正常注册  
+                    formData.isPostQuota = false;  
+                    await currentEventRef.push(formData);  
+                    showStatus('注册成功！| Registration successful!');  
+                }  
+                
+                this.reset();  
+                otherDepartmentGroup.classList.remove('show');  
+
+            } catch (error) {  
+                console.error("Error:", error);  
+                showStatus(error.message || '提交失败，请稍后重试 | Submission failed, please try again later', true);  
+            } finally {  
+                submitButton.disabled = false;  
+                submitButton.textContent = '提交 | Submit';  
+            }  
+        });  
+
+    </script>  
+</body>  
+</html>  
