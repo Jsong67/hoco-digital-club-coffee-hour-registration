@@ -463,7 +463,7 @@
                     showStatus('抱歉，注册已满额，如有额外名额将联系您。 | Sorry, registration is full. We will contact you if additional slots become available.', false);  
                 } else if (quotaStatus.departmentFull) {  
                     // 如果部门已满额但城市未满，提示用户选择其他部门  
-                    throw new Error('抱歉，该部门名额已满，请选择其他部门 | Sorry, this department is full. Please choose another department.');  
+                    throw new Error('抱歉，该部门名额已满。 | Sorry, this department is full.');  
                 } else {  
                     // 正常注册  
                     formData.isPostQuota = false;  
