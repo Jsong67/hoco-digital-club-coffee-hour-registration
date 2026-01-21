@@ -269,11 +269,17 @@
         firebase.initializeApp(firebaseConfig);  
         const database = firebase.database();  
         
-        // 当前活动日期 - 用作数据分组的键  
-        const EVENT_DATE = "2026-01-28";  
+        // 城市对应的活动日期和时间
+        const CITY_EVENT_INFO = {
+            '北京': { date: '2026-02-06', time: '13:30~14:00' },
+            '上海': { date: '2026-01-28', time: '14:00~15:00' }
+        };
         
-        // 使用日期作为数据节点，这样每次活动都有独立的数据集合  
-        const currentEventRef = database.ref('events/' + EVENT_DATE + '/registrations');  
+        // 获取当前城市的活动引用
+        function getEventRef(city) {
+            const eventDate = CITY_EVENT_INFO[city].date;
+            return database.ref('events/' + eventDate + '/registrations');
+        }  
         
         // 城市人数限制  
         const CITY_LIMITS = {  
@@ -356,7 +362,8 @@
 
         // 检查配额 - 只检查当前活动的注册数据  
         async function checkQuota(city, department) {  
-            const snapshot = await currentEventRef.once('value');  
+            const eventRef = getEventRef(city);
+            const snapshot = await eventRef.once('value');  
             let cityCount = 0;  
             let departmentCount = 0;  
             
@@ -379,8 +386,9 @@
         }  
         
         // 检查WWID是否已经在当前活动中注册  
-        async function checkWwidAlreadyRegistered(wwid) {  
-            const snapshot = await currentEventRef.once('value');  
+        async function checkWwidAlreadyRegistered(wwid, city) {  
+            const eventRef = getEventRef(city);
+            const snapshot = await eventRef.once('value');  
             let isRegistered = false;  
             
             snapshot.forEach((child) => {  
@@ -403,6 +411,7 @@
             
             try {  
                 const wwid = document.getElementById('wwid').value.trim();  
+                const city = document.getElementById('city').value;
                 
                 // 检查用户是否在WWID黑名单中 - 使用自定义弹窗  
                 if (PREVIOUS_ATTENDEES.includes(wwid)) {  
@@ -415,7 +424,7 @@
                 }  
                 
                 // 检查用户是否已经在当前活动中注册 - 使用自定义弹窗  
-                const alreadyRegistered = await checkWwidAlreadyRegistered(wwid);  
+                const alreadyRegistered = await checkWwidAlreadyRegistered(wwid, city);  
                 if (alreadyRegistered) {  
                     await showCustomAlert("您已经在本次活动中完成注册，无需重复报名。");  
                     this.reset();  
@@ -429,9 +438,12 @@
                 const emailPrefix = document.getElementById('emailPrefix').value.trim();  
                 const fullEmail = emailPrefix + '@its.jnj.com';  
                 
-                const department = document.getElementById('department').value;  
+                const department = document.getElementById('department').value;
+                const eventInfo = CITY_EVENT_INFO[city];
                 const formData = {  
-                    city: document.getElementById('city').value,  
+                    city: city,  
+                    eventDate: eventInfo.date,
+                    eventTime: eventInfo.time,
                     department: department,  
                     wwid: wwid,  
                     email: fullEmail,  
@@ -453,12 +465,13 @@
                 }  
 
                 const quotaStatus = await checkQuota(formData.city, formData.department);  
+                const eventRef = getEventRef(city);
 
                 // 修复部门满额但城市未满额的情况  
                 if (quotaStatus.cityFull) {  
                     // 如果城市已满额，添加到等待名单  
                     formData.isPostQuota = true;  
-                    await currentEventRef.push(formData);  
+                    await eventRef.push(formData);  
                     showStatus('抱歉，注册已满额，如有额外名额将联系您。 | Sorry, registration is full. We will contact you if additional slots become available.', false);  
                 } else if (quotaStatus.departmentFull) {  
                     // 如果部门已满额但城市未满，提示用户选择其他部门  
@@ -466,7 +479,7 @@
                 } else {  
                     // 正常注册  
                     formData.isPostQuota = false;  
-                    await currentEventRef.push(formData);  
+                    await eventRef.push(formData);  
                     showStatus('注册成功！| Registration successful!');  
                 }  
                 
